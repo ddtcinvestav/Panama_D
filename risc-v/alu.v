@@ -12,7 +12,7 @@ module alu #(parameter WIDTH = 32)
             4'b0001: resultado = A | B;  // OR  
             4'b0010: resultado = A + B;  // ADD
             4'b0110: resultado = A - B;  // SUB
-            default: resultado = 32'b0;
+            default: resultado = 32'b0;  //...
         endcase
     end
     
