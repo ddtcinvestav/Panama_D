@@ -234,7 +234,7 @@ module tb;
 
     riscv_unicycle #(.ARCH(ARCH), .RESET_ADDR(RESET_ADDR)) DUT(
         .clk(clk),
-        .arstn(arstn),
+        .rst(arstn),
         .valid(valid),
         // ROM signals
         .inst_memory_in(inst_memory_in),

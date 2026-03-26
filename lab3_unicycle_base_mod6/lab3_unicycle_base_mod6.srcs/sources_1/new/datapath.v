@@ -2,7 +2,7 @@
 module datapath #(parameter WIDTH = 32, parameter RESET_ADDR = 32'h00000000)(
 
 		input clk,
-		input rst,
+		input arstn, //Cambio el RST a Activo bajo
 		// Señales de control que vienen del módulo control
 		input reg_write,
 		input alu_src,
@@ -49,7 +49,7 @@ module datapath #(parameter WIDTH = 32, parameter RESET_ADDR = 32'h00000000)(
     // Instancia de PC
     pc #(.WIDTH(WIDTH), .RESET_ADDR(RESET_ADDR)) PC(
 	   .clk(clk),
-	   .rst(rst),
+	   .rst(arstn),
 	   .next_pc(next_pc),
 	   .pc_out(pc_out)
         
@@ -72,7 +72,7 @@ module datapath #(parameter WIDTH = 32, parameter RESET_ADDR = 32'h00000000)(
 	// Instancia Regfile
 	regfile #(WIDTH) REGFILE(
 		.clk(clk),
-		.rst(rst),
+		.rst(arstn),
 		.we(reg_write),          
         .rs1(instr[19:15]),      
         .rs2(instr[24:20]),      
