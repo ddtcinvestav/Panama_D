@@ -232,7 +232,7 @@ module tb;
         .r_addr(data_address_out), .r_en(data_memory_read), .r_data(data_memory_in)
     );
 
-    riscv_unicycle #(.ARCH(ARCH), .RESET_ADDR(RESET_ADDR)) DUT(
+    cpu #(.ARCH(ARCH), .RESET_ADDR(RESET_ADDR)) DUT(
         .clk(clk),
         .rst(arstn),
         .valid(valid),
@@ -246,7 +246,7 @@ module tb;
         .data_memory_in(data_memory_in),
         // W-PORT
         .data_memory_write(data_memory_write),
-        .data_memory_write_strb(data_memory_write_strb),
+        //.data_memory_write_strb(data_memory_write_strb),
         .data_memory_write_data(data_memory_write_data)
     );
 
