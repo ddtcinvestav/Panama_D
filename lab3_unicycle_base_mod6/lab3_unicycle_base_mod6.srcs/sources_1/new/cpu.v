@@ -2,7 +2,7 @@
 module cpu #(parameter WIDTH = 32, parameter RESET_ADDR = 32'h00000000)(
 
 		input clk,
-		input arstn, //Cambio el RST a Activo bajo
+		input arstn, //Cambio el RST a Activo bajo.
 		
 		//ROM externa
 		output wire [WIDTH-1:0] inst_mem_r_addr,
