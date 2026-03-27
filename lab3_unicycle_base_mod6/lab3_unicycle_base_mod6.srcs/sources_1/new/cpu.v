@@ -13,6 +13,7 @@ module cpu #(parameter WIDTH = 32, parameter RESET_ADDR = 32'h00000000)(
 		output wire [WIDTH-1:0] data_address_out,
 		output wire [WIDTH-1:0] data_memory_write_data,
 		input wire [WIDTH-1:0] data_memory_in, //Correcion de output a input
+		output wire [1:0] data_memory_write_strb, // Tamaño de escritura: 00=byte, 01=halfword, 10=word
 		//Valid
 		output wire valid
     );
@@ -21,6 +22,9 @@ module cpu #(parameter WIDTH = 32, parameter RESET_ADDR = 32'h00000000)(
 		wire alu_zero;
 		wire reg_write, alu_src, mem_read, mem_write, mem_to_reg, branch;
 		wire [1:0] alu_op;
+
+		//Extrae el tamaño de la operación de memoria
+		assign data_memory_write_strb = inst_memory_in[13:12];
 		
 		
 		wire [WIDTH-1:0] pc_out_int;
