@@ -9,7 +9,7 @@ module datapath #(parameter WIDTH = 32, parameter RESET_ADDR = 32'h00000000)(
 		input [1:0] alu_op,
 		input mem_read,
 		input mem_write,
-		input mem_to_reg,
+		input [1:0] mem_to_reg,
 		input branch,
 		
 		output [6:0] opcode,
@@ -44,6 +44,16 @@ module datapath #(parameter WIDTH = 32, parameter RESET_ADDR = 32'h00000000)(
     // Señales internas para branch
     wire [WIDTH-1:0] pc_branch;
     wire [WIDTH-1:0] next_pc;
+
+    //Se añaden nuevos para manejo de las nuevas instrucciones
+    wire [WIDTH-1:0] mux_wb_1;
+    wire [WIDTH-1:0] mux_wb_2;
+
+    wire branch_taken; // Resultado de la condicion de branch
+
+    //Se añaden nuevo para manejo de branch funct3
+    reg branch_taken_reg;
+    assign branch_taken = branch_taken_reg;
     
     assign opcode = instr[6:0];
     
@@ -52,7 +62,7 @@ module datapath #(parameter WIDTH = 32, parameter RESET_ADDR = 32'h00000000)(
     // Instancia de PC
     pc #(.WIDTH(WIDTH), .RESET_ADDR(RESET_ADDR)) PC(
 	   .clk(clk),
-	   .rst(arstn),
+	   .arstn(arstn),
 	   .next_pc(next_pc),
 	   .pc_out(pc_out)
         
@@ -75,7 +85,7 @@ module datapath #(parameter WIDTH = 32, parameter RESET_ADDR = 32'h00000000)(
 	// Instancia Regfile
 	regfile #(WIDTH) REGFILE(
 		.clk(clk),
-		.rst(arstn),
+		.arstn(arstn),
 		.we(reg_write),          
         .rs1(instr[19:15]),      
         .rs2(instr[24:20]),      
@@ -127,13 +137,43 @@ module datapath #(parameter WIDTH = 32, parameter RESET_ADDR = 32'h00000000)(
         .rd(dmem_rd)          
     );*/
 
-    // Instancia Mux final: selecciona entre ALU y memoria
+    /*Instancia Mux final: selecciona entre ALU y memoria
     mux2 #(WIDTH) MUX_MEM_TO_REG (
         .a(alu_result),
         .b(dmem_rd),
         .sel(mem_to_reg),     
         .y(wd)                
+    );*/
+
+
+
+    // Mux nivel 1: ALU result vs dato de memoria
+    mux2 #(WIDTH) MUX_WB1 (
+        .a(alu_result),
+        .b(dmem_rd),
+        .sel(mem_to_reg[0]),
+        .y(mux_wb_1)
     );
+
+    // Mux nivel 2: resultado anterior vs PC+4
+    mux2 #(WIDTH) MUX_WB2 (
+        .a(mux_wb_1),
+        .b(pc_plus4),
+        .sel(mem_to_reg[1]),
+        .y(mux_wb_2)
+    );
+
+    // Mux nivel 3: resultado anterior vs inmediato (LUI)
+    mux2 #(WIDTH) MUX_WB3 (
+        .a(mux_wb_2),
+        .b(imm),
+        .sel(mem_to_reg[1] & mem_to_reg[0]),
+        .y(wd)
+    );
+
+
+
+
     
     // Instancia Sumador PC + inmediato (branch target)
     add32 #(WIDTH) ADD_BRANCH (
@@ -146,9 +186,22 @@ module datapath #(parameter WIDTH = 32, parameter RESET_ADDR = 32'h00000000)(
     mux2 #(WIDTH) MUX_PC_SRC (
         .a(pc_plus4),
         .b(pc_branch),
-        .sel(branch & alu_zero),   
+        .sel(branch & branch_taken),
         .y(next_pc)
     );
+
+    // Evaluacion de la condicion de branch segun funct3
+     always @(*) begin
+      case(instr[14:12])
+          3'b000: branch_taken_reg = (rd1 == rd2);          // BEQ
+          3'b001: branch_taken_reg = (rd1 != rd2);          // BNE
+          3'b100: branch_taken_reg = ($signed(rd1) < $signed(rd2));   // BLT
+          3'b101: branch_taken_reg = ($signed(rd1) >= $signed(rd2));  // BGE
+          3'b110: branch_taken_reg = (rd1 < rd2);           // BLTU
+          3'b111: branch_taken_reg = (rd1 >= rd2);          // BGEU
+          default: branch_taken_reg = 1'b0;
+      endcase
+  end
 	
     
 endmodule
