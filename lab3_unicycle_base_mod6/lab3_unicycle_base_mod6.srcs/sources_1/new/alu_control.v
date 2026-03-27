@@ -21,6 +21,18 @@ module alu_control(
                     3'b111: alu_control = 4'b0000; // AND
 
                     3'b110: alu_control = 4'b0001; // OR
+                    //Añadidas nuevas
+                    3'b100: alu_control = 4'b0011; // XOR
+
+                    3'b001: alu_control = 4'b0100; // SLL
+                    
+                    3'b101:
+                        if (funct7_30)
+                            alu_control = 4'b0111; // SRA
+                        else
+                            alu_control = 4'b0101; // SRL
+                    3'b010: alu_control = 4'b1000; // SLT
+                    3'b011: alu_control = 4'b1001; // SLTU
 
                     default: alu_control = 4'b0;
                 endcase
