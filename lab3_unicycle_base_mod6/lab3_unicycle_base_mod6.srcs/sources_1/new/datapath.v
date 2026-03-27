@@ -47,7 +47,7 @@ module datapath #(parameter WIDTH = 32, parameter RESET_ADDR = 32'h00000000)(
     
     assign opcode = instr[6:0];
     
-    assign WBResult = wd; // Asignamos la salida del mux final a WBResult para el testbench
+    assign WBResult = wd; // Asignamos la salida del mux final a WBResult para el testbench.
     
     // Instancia de PC
     pc #(.WIDTH(WIDTH), .RESET_ADDR(RESET_ADDR)) PC(
