@@ -20,12 +20,18 @@ module cpu #(parameter WIDTH = 32, parameter RESET_ADDR = 32'h00000000)(
     
     	wire [6:0] opcode;
 		wire alu_zero;
-		wire reg_write, alu_src, mem_read, mem_write, mem_to_reg, branch;
+		wire RegWrite, alu_src, mem_read, mem_write, mem_to_reg, branch; // Cambio de reg_wirte a RegWrite para mantener consistencia con tb
 		wire [1:0] alu_op;
+
+		//Se añadio esto para el tb
+		wire [4:0] rd;
+		assign rd = inst_memory_in[11:7]; // Extrae el campo rd de la instrucción
 
 		//Extrae el tamaño de la operación de memoria
 		assign data_memory_write_strb = inst_memory_in[13:12];
 		
+
+		wire [WIDTH-1:0] WBResult; // Salida del mux final para escribir en el regfile, se añade para el testbench
 		
 		wire [WIDTH-1:0] pc_out_int;
 		wire [WIDTH-1:0] alu_result_int;
@@ -42,7 +48,7 @@ module cpu #(parameter WIDTH = 32, parameter RESET_ADDR = 32'h00000000)(
 		datapath #(.WIDTH(WIDTH), .RESET_ADDR(RESET_ADDR)) DATAPATH (
 			.clk(clk),
 			.arstn(arstn), //Cambio instancia del reset
-			.reg_write(reg_write),
+			.reg_write(RegWrite), //Cambio de reg_write a RegWrite para mantener consistencia con tb
 			.alu_src(alu_src),
 			.alu_op(alu_op),
 			.mem_read(mem_read),
@@ -56,13 +62,14 @@ module cpu #(parameter WIDTH = 32, parameter RESET_ADDR = 32'h00000000)(
 			.dmem_rd(data_memory_in),
 			.pc_out(pc_out_int),
 			.alu_result(alu_result_int),
-			.rd2(rd2_int) 
+			.rd2(rd2_int),
+			.WBResult(WBResult) // Conectamos la salida del mux final a WBResult para el testbench
     	);
     	
     	//Instancia Control
     	control CONTROL (
 			.opcode(opcode),
-			.reg_write(reg_write),
+			.reg_write(RegWrite), //Cambio de reg_write a RegWrite para mantener consistencia con tb
 			.alu_src(alu_src),
 			.mem_to_reg(mem_to_reg),
 			.mem_read(mem_read),

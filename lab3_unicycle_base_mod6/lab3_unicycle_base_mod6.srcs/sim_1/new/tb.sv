@@ -237,7 +237,7 @@ module tb;
         .rst(arstn),
         .valid(valid),
         // ROM signals
-        .inst_memory_in(inst_memory_in),
+        .data_memory_in(data_memory_in[31:0]), // Usamos solo 32 bits
         .inst_mem_r_addr(inst_mem_r_addr),
         // RAM signals
         .data_address_out(data_address_out),
@@ -247,7 +247,7 @@ module tb;
         // W-PORT
         .data_memory_write(data_memory_write),
         //.data_memory_write_strb(data_memory_write_strb),
-        .data_memory_write_data(data_memory_write_data)
+        .data_memory_write_data({{32{1'b0}}, data_memory_write_data}), 
     );
 
     // Functions/Tasks

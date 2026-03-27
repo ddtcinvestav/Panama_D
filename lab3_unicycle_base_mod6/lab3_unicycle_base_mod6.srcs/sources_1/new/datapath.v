@@ -14,6 +14,8 @@ module datapath #(parameter WIDTH = 32, parameter RESET_ADDR = 32'h00000000)(
 		
 		output [6:0] opcode,
     	output alu_zero,
+
+        output [WIDTH-1:0] WBResult, // Salida del mux final para escribir en el regfile, se añade para el testbench
     	
     	//Estas señales pasan de ser wires internos a entradas y salidas del modulo
     	input [WIDTH-1:0] instr,
@@ -45,6 +47,7 @@ module datapath #(parameter WIDTH = 32, parameter RESET_ADDR = 32'h00000000)(
     
     assign opcode = instr[6:0];
     
+    assign WBResult = wd; // Asignamos la salida del mux final a WBResult para el testbench
     
     // Instancia de PC
     pc #(.WIDTH(WIDTH), .RESET_ADDR(RESET_ADDR)) PC(

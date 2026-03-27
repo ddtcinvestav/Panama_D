@@ -1,7 +1,7 @@
 module regfile #(parameter WIDTH = 32, parameter DEPTH = 32, parameter ADDR = 5) 
 (
     input clk,
-    input rst, 
+    input arstn, // Cambio el RST a Activo bajo
     input we,             // Write Enable
     input [ADDR-1:0] rs1, // Indice registro 1
     input [ADDR-1:0] rs2, // Indice registro 2
@@ -17,7 +17,7 @@ module regfile #(parameter WIDTH = 32, parameter DEPTH = 32, parameter ADDR = 5)
    integer i;
    
    always @(posedge clk) begin
-        if(rst) begin
+        if(!arstn) begin
             for(i = 0; i < DEPTH; i = i + 1)
             regs[i] <= 32'b0;
         end else if (we && (rd != 0)) begin
