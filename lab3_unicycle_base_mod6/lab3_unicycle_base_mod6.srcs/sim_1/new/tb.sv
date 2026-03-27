@@ -241,7 +241,7 @@ module tb;
       .inst_memory_in(inst_memory_in),
       // RAM signals
       .data_address_out(data_address_out),
-      // R-PORT
+      // R-PORT.
       .data_memory_read(data_memory_read),
       .data_memory_in(data_memory_in[31:0]),
       // W-PORT
