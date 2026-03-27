@@ -37,7 +37,7 @@ module cpu #(parameter WIDTH = 32, parameter RESET_ADDR = 32'h00000000)(
 		//Instancia DataPath
 		datapath #(.WIDTH(WIDTH), .RESET_ADDR(RESET_ADDR)) DATAPATH (
 			.clk(clk),
-			.rst(arstn),
+			.arstn(arstn), //Cambio instancia del reset
 			.reg_write(reg_write),
 			.alu_src(alu_src),
 			.alu_op(alu_op),

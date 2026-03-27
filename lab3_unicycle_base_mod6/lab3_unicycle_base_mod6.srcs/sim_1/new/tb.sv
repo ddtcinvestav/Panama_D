@@ -232,7 +232,7 @@ module tb;
         .r_addr(data_address_out), .r_en(data_memory_read), .r_data(data_memory_in)
     );
 
-    cpu #(.ARCH(ARCH), .RESET_ADDR(RESET_ADDR)) DUT(
+    cpu #(.WIDTH(ARCH), .RESET_ADDR(RESET_ADDR)) DUT(
         .clk(clk),
         .rst(arstn),
         .valid(valid),
