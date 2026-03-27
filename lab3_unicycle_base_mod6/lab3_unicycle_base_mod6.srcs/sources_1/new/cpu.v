@@ -12,7 +12,7 @@ module cpu #(parameter WIDTH = 32, parameter RESET_ADDR = 32'h00000000)(
 		output wire data_memory_read,
 		output wire [WIDTH-1:0] data_address_out,
 		output wire [WIDTH-1:0] data_memory_write_data,
-		output wire [WIDTH-1:0] data_memory_in,
+		input wire [WIDTH-1:0] data_memory_in, //Correcion de output a input
 		//Valid
 		output wire valid
     );
