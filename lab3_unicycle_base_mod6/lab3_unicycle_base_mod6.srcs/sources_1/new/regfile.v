@@ -1,7 +1,7 @@
 module regfile #(parameter WIDTH = 32, parameter DEPTH = 32, parameter ADDR = 5) 
 (
     input clk,
-    input arstn, // Cambio el RST a Activo bajo
+    input arstn, // Cambio el RST a Activo bajo.
     input we,             // Write Enable
     input [ADDR-1:0] rs1, // Indice registro 1
     input [ADDR-1:0] rs2, // Indice registro 2
