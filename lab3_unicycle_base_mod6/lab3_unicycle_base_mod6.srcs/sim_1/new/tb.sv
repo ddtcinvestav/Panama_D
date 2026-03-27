@@ -233,22 +233,22 @@ module tb;
     );
 
     cpu #(.WIDTH(ARCH), .RESET_ADDR(RESET_ADDR)) DUT(
-        .clk(clk),
-        .rst(arstn),
-        .valid(valid),
-        // ROM signals
-        .data_memory_in(data_memory_in[31:0]), // Usamos solo 32 bits
-        .inst_mem_r_addr(inst_mem_r_addr),
-        // RAM signals
-        .data_address_out(data_address_out),
-        // R-PORT
-        .data_memory_read(data_memory_read),
-        .data_memory_in(data_memory_in),
-        // W-PORT
-        .data_memory_write(data_memory_write),
-        //.data_memory_write_strb(data_memory_write_strb),
-        .data_memory_write_data({{32{1'b0}}, data_memory_write_data}), 
-    );
+      .clk(clk),
+      .arstn(arstn),
+      .valid(valid),
+      // ROM signals
+      .inst_mem_r_addr(inst_mem_r_addr),
+      .inst_memory_in(inst_memory_in),
+      // RAM signals
+      .data_address_out(data_address_out),
+      // R-PORT
+      .data_memory_read(data_memory_read),
+      .data_memory_in(data_memory_in[31:0]),
+      // W-PORT
+      .data_memory_write(data_memory_write),
+      .data_memory_write_strb(data_memory_write_strb),
+      .data_memory_write_data(data_memory_write_data[31:0])
+  );
 
     // Functions/Tasks
     function bit wb_is_needed(input logic [31:0] inst);
