@@ -20,7 +20,9 @@ module cpu #(parameter WIDTH = 32, parameter RESET_ADDR = 32'h00000000)(
     
     	wire [6:0] opcode;
 		wire alu_zero;
-		wire RegWrite, alu_src, mem_read, mem_write, mem_to_reg, branch; // Cambio de reg_wirte a RegWrite para mantener consistencia con tb
+	
+		wire RegWrite, alu_src, mem_read, mem_write, branch;// Cambio de reg_wirte a RegWrite para mantener consistencia con t
+  		wire [1:0] mem_to_reg; //Tamaño de actualizado de 1 bits a 2 bits para soportar byte, halfword y word
 		wire [1:0] alu_op;
 
 		//Se añadio esto para el tb
