@@ -11,6 +11,7 @@ module datapath #(parameter WIDTH = 32, parameter RESET_ADDR = 32'h00000000)(
 		input mem_write,
 		input [1:0] mem_to_reg,
 		input branch,
+        input jump, // Nueva señal de control para saltos
 		
 		output [6:0] opcode,
     	output alu_zero,
@@ -123,7 +124,7 @@ module datapath #(parameter WIDTH = 32, parameter RESET_ADDR = 32'h00000000)(
     alu_control ALU_CONTROL (
         .alu_op(alu_op),             
         .funct3(instr[14:12]),       
-        .funct7_30(instr[30]),       
+        .funct7_30(opcode == 'h33 ? instr[30]: 1'b0),       
         .alu_control(alu_ctrl)
     );
     
@@ -168,8 +169,25 @@ module datapath #(parameter WIDTH = 32, parameter RESET_ADDR = 32'h00000000)(
         .a(mux_wb_2),
         .b(imm),
         .sel(mem_to_reg[1] & mem_to_reg[0]),
+        .y(mux_wb_3)
+    );
+
+    mux2 #(WIDTH) MUX_WB4 (
+        .a(mux_wb_3),
+        .b(pc_branch),
+        .sel(una senal que te diga que este mux va a escribir pc_brach - AUIPC),
         .y(wd)
     );
+
+    /*module top´
+      input clk, arstn, valid´
+
+      cpu )
+
+      imem =
+
+      dmem 
+    endmodule*/
 
 
 
@@ -186,7 +204,7 @@ module datapath #(parameter WIDTH = 32, parameter RESET_ADDR = 32'h00000000)(
     mux2 #(WIDTH) MUX_PC_SRC (
         .a(pc_plus4),
         .b(pc_branch),
-        .sel(branch & branch_taken),
+        .sel((branch & branch_taken) | jump),
         .y(next_pc)
     );
 

@@ -38,6 +38,8 @@ module cpu #(parameter WIDTH = 32, parameter RESET_ADDR = 32'h00000000)(
 		wire [WIDTH-1:0] pc_out_int;
 		wire [WIDTH-1:0] alu_result_int;
 		wire [WIDTH-1:0] rd2_int;
+
+		wire jump; // Señal de control para saltos, se añade para el datapath
 		
 		//Para mantener mis nombres
 		assign inst_mem_r_addr         = pc_out_int;
@@ -57,6 +59,7 @@ module cpu #(parameter WIDTH = 32, parameter RESET_ADDR = 32'h00000000)(
 			.mem_write(mem_write),
 			.mem_to_reg(mem_to_reg),
 			.branch(branch),
+			.jump(jump), // Nueva señal de control para saltos
 			.opcode(opcode),  
 			.alu_zero(alu_zero),
 			//Nuevas instancias
@@ -78,7 +81,8 @@ module cpu #(parameter WIDTH = 32, parameter RESET_ADDR = 32'h00000000)(
 			.mem_write(mem_write),
 			.branch(branch),
 			.alu_op(alu_op),
-			.valid(valid)
+			.valid(valid),
+			.jump(jump) // No conectamos la señal de jump al control por ahora, se manejará dentro del datapath
     	);
 		
 endmodule

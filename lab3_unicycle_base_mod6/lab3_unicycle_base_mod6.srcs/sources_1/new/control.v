@@ -7,7 +7,8 @@ module control (
     output reg [1:0] mem_to_reg,// Expandimos a 2 bits para manejar las demas instrucciones 00=ALU, 01=MEM, 10=PC+4, 11=IMM
     output reg alu_src,         // Reg(0) o Imm(1) -> ALU
     output reg [1:0]  alu_op,    // ALU control mode
-    output reg valid			//Señal de Valid añadida
+    output reg valid,			//Señal de Valid añadida
+    output reg jump
 );
     always @(*) begin
         case (opcode)
@@ -20,6 +21,7 @@ module control (
                 alu_src    = 1'b0;      
                 alu_op     = 2'b10;
                 valid 	   = 1'b1;
+                jump       = 1'b0;
             end
             
             7'b0000011: begin          //LOAD (lw, lb, lh
@@ -31,6 +33,7 @@ module control (
                 alu_src    = 1'b1;      
                 alu_op     = 2'b00;
                 valid 	   = 1'b1;
+                jump       = 1'b0;
             end
 
             7'b0100011: begin       //STORE (sw, sb, sh)        
@@ -42,6 +45,7 @@ module control (
                 alu_src    = 1'b1;      
                 alu_op     = 2'b00;
                 valid 	   = 1'b1;
+                jump       = 1'b0;
             end
 
             7'b1100011: begin       //BRANCH (beq, bne, blt, bge) 
@@ -53,6 +57,7 @@ module control (
                 alu_src    = 1'b0;      
                 alu_op     = 2'b01;
                 valid 	   = 1'b1;
+                jump       = 1'b0;
             end
             
             7'b0010011: begin        //Instruccion nueva añadida OP-IMM
@@ -64,6 +69,7 @@ module control (
             alu_src    = 1'b1;      
             alu_op     = 2'b10;     
             valid      = 1'b1;
+            jump       = 1'b0;
             end
             
             7'b0110111: begin       // Instruccion nueva añadida LUI
@@ -75,6 +81,7 @@ module control (
                 alu_src    = 1'b0;
                 alu_op     = 2'b00;
                 valid      = 1'b1;
+                jump       = 1'b0;
             end
             
             7'b0010111: begin       // Instruccion nueva añadida AUIPC
@@ -86,6 +93,7 @@ module control (
                 alu_src    = 1'b1;      
                 alu_op     = 2'b00;     
                 valid      = 1'b1;
+                jump       = 1'b0;
             end
               
             7'b1101111: begin       // Instruccion nueva añadida JAL
@@ -97,6 +105,7 @@ module control (
                 alu_src    = 1'b1;      
                 alu_op     = 2'b00;     
                 valid      = 1'b1;
+                jump       = 1'b1;
             end
             
             7'b1100111: begin       // Instruccion nueva añadida JALR
@@ -108,6 +117,7 @@ module control (
                 alu_src    = 1'b1;      
                 alu_op     = 2'b00;     
                 valid      = 1'b1;
+                jump       = 1'b1;
             end
             default: begin               
                 reg_write  = 1'b0;
@@ -118,6 +128,7 @@ module control (
                 alu_src    = 1'b0;
                 alu_op     = 2'b00;
                 valid 	   = 1'b0;
+                jump       = 1'b0;
             end
         endcase
     end

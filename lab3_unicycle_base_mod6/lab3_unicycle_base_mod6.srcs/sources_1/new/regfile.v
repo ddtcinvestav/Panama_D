@@ -31,8 +31,8 @@ module regfile #(parameter WIDTH = 32, parameter DEPTH = 32, parameter ADDR = 5)
         
         if(rs1 == 5'b0)
           rd1 = 32'b0;
-        else if (we && (rd == rs1) && (rd != 0))
-            rd1 = wd;
+        /*else if (we && (rd == rs1) && (rd != 0))
+            rd1 = wd;*/
         else
             rd1 = regs[rs1];
         
@@ -41,8 +41,8 @@ module regfile #(parameter WIDTH = 32, parameter DEPTH = 32, parameter ADDR = 5)
     always @(*) begin
         if (rs2 == 5'b0)
             rd2 = 32'b0;
-        else if (we && (rd == rs2) && (rd !=0))
-            rd2 = wd;
+        /*else if (we && (rd == rs2) && (rd !=0))
+            rd2 = wd;*/
         else
             rd2 = regs[rs2];
    end
