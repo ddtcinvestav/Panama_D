@@ -19,6 +19,7 @@ module alu #(parameter WIDTH = 32)
             4'b0111: resultado = $signed(A) >>> B[4:0];             // SRA
             4'b1000: resultado = ($signed(A) < $signed(B)) ? 1 : 0; // SLT
             4'b1001: resultado = (A < B) ? 1 : 0;                   // SLTU
+            4'b1010: resultado = A * B;								// Se añadio MUL
             default: resultado = 32'b0;
         endcase
     end

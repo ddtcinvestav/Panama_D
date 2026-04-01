@@ -51,6 +51,13 @@ module datapath #(parameter WIDTH = 32, parameter RESET_ADDR = 32'h00000000)(
     wire [WIDTH-1:0] mux_wb_2;
     wire [WIDTH-1:0] mux_wb_3;
     wire auipc_sel = (opcode == 7'b0010111);
+    
+    
+    wire jalr_sel = (opcode == 7'b1100111);          // 1 solo cuando es JALR
+    wire pc_branch_sel = (branch & branch_taken) | (jump & ~jalr_sel); // branch o JAL (no JALR)
+    wire [WIDTH-1:0] pc_stage1;   
+    
+    
 
     wire branch_taken; // Resultado de la condicion de branch
 
@@ -126,7 +133,8 @@ module datapath #(parameter WIDTH = 32, parameter RESET_ADDR = 32'h00000000)(
     alu_control ALU_CONTROL (
         .alu_op(alu_op),             
         .funct3(instr[14:12]),       
-        .funct7_30(opcode == 'h33 ? instr[30]: 1'b0),       
+        .funct7_30(opcode == 'h33 ? instr[30]: 1'b0),
+        .funct7_0(opcode == 7'h33 ? instr[25] : 1'b0), //Añadido conexion del nuevo puerto de alu_control       
         .alu_control(alu_ctrl)
     );
     
@@ -201,14 +209,34 @@ module datapath #(parameter WIDTH = 32, parameter RESET_ADDR = 32'h00000000)(
         .b(imm),
         .sum(pc_branch)
     );
+    
+    // Mux nivel 1: pc_plus4 vs pc_branch (para branches y JAL)
+      mux2 #(WIDTH) MUX_PC1 (
+          .a(pc_plus4),
+          .b(pc_branch),
+          .sel(pc_branch_sel),
+          .y(pc_stage1)
+      );
 
-    // Intancia Mux para decidir el próximo PC
+      // Mux nivel 2: resultado anterior vs alu_result (para JALR: salta a rd1+imm)
+      mux2 #(WIDTH) MUX_PC2 (
+          .a(pc_stage1),
+          .b(alu_result),
+          .sel(jalr_sel),
+          .y(next_pc)
+      );
+    
+    
+    /* Intancia Mux para decidir el próximo PC
     mux2 #(WIDTH) MUX_PC_SRC (
         .a(pc_plus4),
         .b(pc_branch),
         .sel((branch & branch_taken) | jump),
         .y(next_pc)
-    );
+    );*/
+    
+    
+    
 
     // Evaluacion de la condicion de branch segun funct3
      always @(*) begin
