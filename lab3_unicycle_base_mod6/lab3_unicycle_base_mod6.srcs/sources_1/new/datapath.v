@@ -49,6 +49,8 @@ module datapath #(parameter WIDTH = 32, parameter RESET_ADDR = 32'h00000000)(
     //Se añaden nuevos para manejo de las nuevas instrucciones
     wire [WIDTH-1:0] mux_wb_1;
     wire [WIDTH-1:0] mux_wb_2;
+    wire [WIDTH-1:0] mux_wb_3;
+    wire auipc_sel = (opcode == 7'b0010111);
 
     wire branch_taken; // Resultado de la condicion de branch
 
@@ -175,7 +177,7 @@ module datapath #(parameter WIDTH = 32, parameter RESET_ADDR = 32'h00000000)(
     mux2 #(WIDTH) MUX_WB4 (
         .a(mux_wb_3),
         .b(pc_branch),
-        .sel(una senal que te diga que este mux va a escribir pc_brach - AUIPC),
+        .sel(auipc_sel),
         .y(wd)
     );
 

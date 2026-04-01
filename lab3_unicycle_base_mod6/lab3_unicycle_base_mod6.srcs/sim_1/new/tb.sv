@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 `default_nettype none
-`define TEST basic_rv32i_ldst
+`define TEST c_mat_m
 
 import rv_enums::*;
 
