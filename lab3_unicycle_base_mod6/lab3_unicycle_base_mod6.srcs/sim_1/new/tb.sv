@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 `default_nettype none
-`define TEST c_hello_world
+`define TEST c_fibo2
 
 import rv_enums::*;
 
