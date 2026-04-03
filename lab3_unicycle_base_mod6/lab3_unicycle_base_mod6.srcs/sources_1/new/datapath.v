@@ -55,7 +55,9 @@ module datapath #(parameter WIDTH = 32, parameter RESET_ADDR = 32'h00000000)(
     
     wire jalr_sel = (opcode == 7'b1100111);          // 1 solo cuando es JALR
     wire pc_branch_sel = (branch & branch_taken) | (jump & ~jalr_sel); // branch o JAL (no JALR)
-    wire [WIDTH-1:0] pc_stage1;   
+    wire [WIDTH-1:0] pc_stage1;
+    
+    reg [WIDTH-1:0] dmem_rd_ext;  // Añadido Dato de memoria con extension de signo/cero segun funct3 (lb, lh, lbu, lhu, lw 
     
     
 
@@ -161,7 +163,7 @@ module datapath #(parameter WIDTH = 32, parameter RESET_ADDR = 32'h00000000)(
     // Mux nivel 1: ALU result vs dato de memoria
     mux2 #(WIDTH) MUX_WB1 (
         .a(alu_result),
-        .b(dmem_rd),
+        .b(dmem_rd_ext), //Añadido dato de memoria con extension segun funct3
         .sel(mem_to_reg[0]),
         .y(mux_wb_1)
     );
@@ -238,7 +240,7 @@ module datapath #(parameter WIDTH = 32, parameter RESET_ADDR = 32'h00000000)(
     
     
 
-    // Evaluacion de la condicion de branch segun funct3
+    // Añadido - Evaluacion de la condicion de branch segun funct3
      always @(*) begin
       case(instr[14:12])
           3'b000: branch_taken_reg = (rd1 == rd2);          // BEQ
@@ -249,7 +251,19 @@ module datapath #(parameter WIDTH = 32, parameter RESET_ADDR = 32'h00000000)(
           3'b111: branch_taken_reg = (rd1 >= rd2);          // BGEU
           default: branch_taken_reg = 1'b0;
       endcase
-  end
+  	end
+  	
+		// Extraccion de byte/halfword/word de dmem segun funct3
+	  always @(*) begin
+		  case (instr[14:12])
+			  3'b000: dmem_rd_ext = {{24{dmem_rd[7]}},  dmem_rd[7:0]};   // lb  - sign-extend byte
+			  3'b001: dmem_rd_ext = {{16{dmem_rd[15]}}, dmem_rd[15:0]};  // lh  - sign-extend halfword
+			  3'b010: dmem_rd_ext = dmem_rd;                              // lw  - palabra completa
+			  3'b100: dmem_rd_ext = {24'h0, dmem_rd[7:0]};               // lbu - zero-extend byte
+			  3'b101: dmem_rd_ext = {16'h0, dmem_rd[15:0]};              // lhu - zero-extend halfword
+			  default: dmem_rd_ext = dmem_rd;
+		  endcase
+	  end
 	
     
 endmodule
