@@ -18,3 +18,8 @@ vivado_*.log
 
 # Compiled simulation objects
 xsim.dir/
+
+# Quartus archivos internos generados
+db/
+incremental_db/
+*.smsg
